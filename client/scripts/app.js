@@ -1,10 +1,9 @@
-// YOUR CODE HERE:
-
 var app = {};
 var user = prompt('What is your name?');
 
 var selRoom = null;
 var selUser = null;
+var friends = [];
 
 app.init = function() {
   app.fetch();
@@ -39,7 +38,6 @@ app.fetch = function() {
   }
   if (selUser){
     params['where']['username'] = selUser;
-    $()
   }
 
   $.ajax({
@@ -60,22 +58,35 @@ app.fetch = function() {
 };
 
 app.display = function(message) {
-  var $renderedMsg = $("<div class='chat'></div>");
+
+  var $renderedMsg = $("<div class='content'></div>");
   $renderedMsg.text(": " + message.text);
+
   var $userName = $("<span class = 'username'></span>");
   $userName.text(message.username);
   $renderedMsg.prepend($userName);
-  $(".chatDisplay").append($renderedMsg);
-  var $roomName = $('<br/><span class = "roomname"></span>');
+
+  var $roomName = $('<br/><br/><span class = "roomname"></span>');
   $roomName.text("roomname: " + message.roomname);
   $renderedMsg.append($roomName);
+
+  var $messageContent = $("<div class='chat'></div>");
+  $messageContent.append($renderedMsg);
+  $messageContent.append("<img class = 'addFriend' src = 'images/barney.jpeg'> </img>");
+
+  $(".chatDisplay").append($messageContent);
 };
 
-var updating = setInterval(app.fetch, 5000);
+// var updating = setInterval(app.fetch, 5000);
+//
+app.toggleFriend = function(user) {
+  console.log(user);
+};
 
 $(document).on("ready", function() {
 
-  $(".send").on("click", function() {
+  $(".send").on("click", function(event) {
+    event.preventDefault();
     var input = $(".sendText").val();
     $(".sendText").val("");
     var message = {
@@ -91,6 +102,12 @@ $(document).on("ready", function() {
   $(".chatDisplay").on('click',".username", function (){
     selUser = ($(this).text());
     app.fetch();
+  });
+
+  $(".chatDisplay").on('click', ".addFriend", function() {
+    console.dir($(this).parent());
+    var user = $(this).parent().firstChild().firstChild();
+    app.toggleFriend(user.text());
   });
 
   app.init();

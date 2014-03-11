@@ -67,6 +67,16 @@ form input[type=text] {
     padding: 5px;
     margin-bottom: 5px;
     background-color: #eee;
+    min-height: 100px;
+    width: 400px;
+    overflow:hidden;
+}
+
+.content {
+    float: left;
+    word-wrap: break-word;
+    width: 330px;
+    margin:5px;
 }
 
 .chat .username {
@@ -76,6 +86,7 @@ form input[type=text] {
 .username:hover, .roomname:hover {
     color: blue;
     cursor: pointer;
+    float: left;
 }
 
 .chat:hover {
@@ -86,11 +97,23 @@ form input[type=text] {
     float: left;
 }
 
-.friends {
+.addFriend {
     float: right;
-    height: 500px;
+    opacity: 0.6;
+}
+
+.addFriend:hover, .friended {
+    cursor: pointer;
+    opacity: 1;
+    border: solid yellow 2px;
+}
+
+.friends {
+    float: left;
+    min-height: 200px;
     width: 200px;
     border: solid black 3px;
+    margin: 20px;
 }
 
 .friendsLabel {
