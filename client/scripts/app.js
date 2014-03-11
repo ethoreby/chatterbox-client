@@ -1,8 +1,14 @@
 // YOUR CODE HERE:
 
 var app = {};
+var user = prompt('What is your name?');
 
-app.init = function() {};
+var selRoom = null;
+var selUser = null;
+
+app.init = function() {
+  app.fetch();
+};
 
 app.send = function(message) {
 
@@ -21,21 +27,25 @@ app.send = function(message) {
   });
 };
 
+
 app.fetch = function() {
   // var param = encodeURIComponent(JSON.stringify({"where":{"username":"shawndrost"}}));
+  var params = {
+    "order": "-createdAt",
+    "where": {}
+  };
 
-  // console.log(param);
+  if (selRoom){
+    params['where']['roomname'] = selRoom;
+  }
+  if (selUser){
+    params['where']['username'] = selUser;
+  }
+
   $.ajax({
     url: 'https://api.parse.com/1/classes/chatterbox/',
-    data: {
-
-      "where": {
-        "username": "shawndrost"
-      }
-    },
+    data: params,
     success: function (data) {
-      console.dir(data);
-      console.log('chatterbox: Message rec');
       $('.messages').remove();
       data.results.forEach(function(msg) {
         app.display(msg);
@@ -50,9 +60,15 @@ app.fetch = function() {
 
 app.display = function(message) {
   // console.dir(message);
-  var $renderedMsg = $("<div class = 'messages'></div>");
-  $renderedMsg.text(message.username + ": " + message.text);
+  var $renderedMsg = $("<div class='chat'></div>");
+  $renderedMsg.text(": " + message.text);
+  var $userName = $("<span class = 'username'></span>");
+  $userName.text(message.username);
+  $renderedMsg.prepend($userName);
   $(".chatDisplay").append($renderedMsg);
+  var $roomName = $('<br/><span class = "roomname"></span>');
+  $roomName.text("roomname: " + message.roomname);
+  $renderedMsg.append($roomName);
 };
 
 var updating = setInterval(app.fetch, 5000);
@@ -61,8 +77,9 @@ $(document).on("ready", function() {
 
   $(".send").on("click", function() {
     var input = $(".sendText").val();
+    $(".sendText").val("");
     var message = {
-      'username': "TheRealCharles",
+      'username': user,
       'text': input,
       'roomname': "default"
     };
@@ -71,6 +88,12 @@ $(document).on("ready", function() {
     app.fetch();
   });
 
+  $(".chatDisplay").on('click',".username", function (){
+    selUser = ($(this).text());
+    app.fetch();
+  });
+
+  app.init();
 });
 
 
