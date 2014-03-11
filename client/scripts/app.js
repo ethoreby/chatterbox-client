@@ -3,7 +3,7 @@ var user = prompt('What is your name?');
 
 var selRoom = null;
 var selUser = null;
-var friends = [];
+var friends = {};
 
 app.init = function() {
   app.fetch();
@@ -72,15 +72,26 @@ app.display = function(message) {
 
   var $messageContent = $("<div class='chat'></div>");
   $messageContent.append($renderedMsg);
-  $messageContent.append("<img class = 'addFriend' src = 'images/barney.jpeg'> </img>");
+  var $barney = $("<img class = 'addFriend' src = 'images/barney.jpeg'> </img>");
+  $messageContent.append($barney);
+
+  if (friends[message.username]) {
+    $userName.toggleClass('userFriend');
+    $barney.toggleClass('friended');
+  }
 
   $(".chatDisplay").append($messageContent);
 };
 
 // var updating = setInterval(app.fetch, 5000);
 //
-app.toggleFriend = function(user) {
-  console.log(user);
+app.toggleFriend = function(name) {
+  if (friends[name] === undefined) {
+    friends[name] = true;
+    app.fetch();
+  } else {
+    delete friends[name];
+  }
 };
 
 $(document).on("ready", function() {
@@ -105,9 +116,9 @@ $(document).on("ready", function() {
   });
 
   $(".chatDisplay").on('click', ".addFriend", function() {
-    console.dir($(this).parent());
-    var user = $(this).parent().firstChild().firstChild();
-    app.toggleFriend(user.text());
+    var name = $(this).parent().find('.username').text();
+    app.toggleFriend(name);
+    app.fetch();
   });
 
   app.init();
