@@ -27,7 +27,6 @@ app.send = function(message) {
   });
 };
 
-
 app.fetch = function() {
   // var param = encodeURIComponent(JSON.stringify({"where":{"username":"shawndrost"}}));
   var params = {
@@ -40,13 +39,15 @@ app.fetch = function() {
   }
   if (selUser){
     params['where']['username'] = selUser;
+    $()
   }
 
   $.ajax({
     url: 'https://api.parse.com/1/classes/chatterbox/',
     data: params,
     success: function (data) {
-      $('.messages').remove();
+
+      $('.chat').remove();
       data.results.forEach(function(msg) {
         app.display(msg);
       });
@@ -59,7 +60,6 @@ app.fetch = function() {
 };
 
 app.display = function(message) {
-  // console.dir(message);
   var $renderedMsg = $("<div class='chat'></div>");
   $renderedMsg.text(": " + message.text);
   var $userName = $("<span class = 'username'></span>");

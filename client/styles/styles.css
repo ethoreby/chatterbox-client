@@ -6,10 +6,10 @@ body {
 }
 
 #main {
-    width: 500px;
-    margin: auto;
+    width: 700px;
     text-align: left;
     background: white;
+    position:absolute;
     padding: 50px 60px;
     border: solid #ddd;
     border-width: 0 1px 1px 1px;
@@ -59,6 +59,10 @@ form input[type=text] {
     padding: 5px;
 }
 
+.sendText {
+    clear:both;
+}
+
 .chat {
     padding: 5px;
     margin-bottom: 5px;
@@ -78,6 +82,20 @@ form input[type=text] {
     background-color: #ddd;
 }
 
+.chatDisplay {
+    float: left;
+}
+
+.friends {
+    float: right;
+    height: 500px;
+    width: 200px;
+    border: solid black 3px;
+}
+
+.friendsLabel {
+    text-align: center;
+}
 .spinner {
     float: right;
     height: 46px;
