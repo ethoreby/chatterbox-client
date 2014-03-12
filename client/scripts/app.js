@@ -1,49 +1,60 @@
-var App = function() {
-  this.user = prompt('What is your name?');
-  this.selRoom = null;
-  this.selUser = null;
-  this.friends = {};
+var app = {};
+window.app = app;
 
-  var app = this;
-  $(document).on("ready", function() {
-    app.init();
-  });
-};
+  //variables
+app.server = "https://api.parse.com/1/classes/chatterbox/";
+app.user = prompt('What is your name?');
+app.selRoom = null;
+app.selUser = null;
+app.friends = {};
+app.rooms = {};
 
-App.prototype.init = function() {
-  var app = this;
+
+
+
+
+//click listeners
+app.init = function() {
+
+  //cached jQuery references
+  app.$chatDisplay = $(".chatDisplay");
+  app.$dropdown = $(".dropdown");
+
   $(".send").on("click", function(event) {
     event.preventDefault();
     var input = $(".sendText").val();
     $(".sendText").val("");
     var message = {
-      'username': app.user,
-      'text': input,
-      'roomname': "default"
+      "username": app.user,
+      "text": input,
+      "roomname": "default"
     };
-
     app.send(message);
     app.fetch();
   });
 
-  $(".chatDisplay").on('click',".username", function (){
+  app.$chatDisplay.on('click',".username", function(){
     app.selUser = ($(this).text());
-    app.fetch();
+     app.fetch();
   });
 
-  $(".chatDisplay").on('click', ".addFriend", function() {
+  app.$chatDisplay.on('click', ".addFriend", function() {
     var name = $(this).parent().find('.username').text();
     app.toggleFriend(name);
     app.fetch();
   });
 
+  app.$dropdown.change(function () {
+     app.selRoom = $('select').val();
+     app.fetch();
+  })
+
   app.fetch();
 };
 
-App.prototype.send = function(message) {
-
+app.send = function(message) {
   $.ajax({
-    url: 'https://api.parse.com/1/classes/chatterbox',
+    url: app.server,
     type: 'POST',
     data: JSON.stringify(message),
     contentType: 'application/json',
@@ -57,29 +68,29 @@ App.prototype.send = function(message) {
   });
 };
 
-App.prototype.fetch = function() {
-
-  var app = this;
+app.fetch = function() {
   var params = {
     "order": "-createdAt",
     "where": {}
   };
 
-  if (this.selRoom){
-    params['where']['roomname'] = this.selRoom;
+  if (app.selRoom){
+    params['where']['roomname'] = app.selRoom;
   }
-  if (this.selUser){
-    params['where']['username'] = this.selUser;
+  if (app.selUser){
+    params['where']['username'] = app.selUser;
   }
 
   $.ajax({
-    url: 'https://api.parse.com/1/classes/chatterbox/',
+    url: app.server,
     data: params,
     success: function (data) {
-
       $('.chat').remove();
       data.results.forEach(function(msg) {
-        app.display(msg);
+        if (msg.roomname && msg.username) {
+          app.display(msg);
+          app.generateRooms(msg);
+        }
       });
      },
     error: function (data) {
@@ -89,7 +100,16 @@ App.prototype.fetch = function() {
   });
 };
 
-App.prototype.display = function(message) {
+app.generateRooms = function (message) {
+  if (!app.rooms[message.roomname]) {
+    app.rooms[message.roomname] = true;
+    var roomOption = $("<option></option>");
+    roomOption.text(message.roomname);
+    app.$dropdown.append(roomOption);
+  }
+};
+
+app.display = function(message) {
 
   var $renderedMsg = $("<div class='content'></div>");
   $renderedMsg.text(": " + message.text);
@@ -107,25 +127,25 @@ App.prototype.display = function(message) {
   var $barney = $("<img class = 'addFriend' src = 'images/barney.jpeg'> </img>");
   $messageContent.append($barney);
 
-  if (this.friends[message.username]) {
+  if (app.friends[message.username]) {
     $userName.toggleClass('userFriend');
     $barney.toggleClass('friended');
   }
 
-  $(".chatDisplay").append($messageContent);
+  app.$chatDisplay.append($messageContent);
+
 };
 
-// var updating = setInterval(app.fetch, 5000);
-//
-App.prototype.toggleFriend = function(name) {
-  if (this.friends[name] === undefined) {
-    this.friends[name] = true;
-    this.fetch();
+app.toggleFriend = function(name) {
+  if (app.friends[name] === undefined) {
+    app.friends[name] = true;
+    app.fetch();
   } else {
-    delete this.friends[name];
+    delete app.friends[name];
   }
 };
 
+var updating = setInterval(app.fetch, 5000);
 
 
 

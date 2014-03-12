@@ -13,13 +13,19 @@
     <script src="scripts/app.js"></script>
   </head>
   <body>
-  <script>var app = new App();</script>
+  <script>
+    $(function() {
+      app.init();
+    });
+  </script>
     <div id="main">
-      <h1>chatterbox</h1>
+      <h1 style="color:purple;">chatter<span style="color:green;">box</span></h1>
       <form>
         <input type='text' class='sendText'></input>
         <button class='send'>send</button>
       </form>
+      <select class = "dropdown">
+      </select>
       <div>
         <div class="chatDisplay"></div>
         <div class="friends">
