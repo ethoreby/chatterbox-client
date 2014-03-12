@@ -27,9 +27,20 @@ app.init = function() {
     var message = {
       "username": app.user,
       "text": input,
-      "roomname": "default"
+      "roomname": app.$dropdown.val(),
     };
+    console.log(message);
     app.send(message);
+    app.fetch();
+  });
+
+  $(".createRoom").on("click", function(event) {
+    event.preventDefault();
+    var newRoom = prompt("What is the name of your new room?");
+    var message = {};
+    message["roomname"] = newRoom;
+    console.log(message);
+    app.generateRooms(message);
     app.fetch();
   });
 
@@ -47,7 +58,7 @@ app.init = function() {
   app.$dropdown.change(function () {
      app.selRoom = $('select').val();
      app.fetch();
-  })
+  });
 
   app.fetch();
 };
